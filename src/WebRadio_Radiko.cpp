@@ -1,8 +1,5 @@
-//#define WIFI_SSID "SET YOUR WIFI SSID"
-//#define WIFI_PASS "SET YOUR WIFI PASS"
-//#define RADIKO_USER "SET YOUR MAIL-ADDRESS"
-//#define RADIKO_PASS "SET YOUR PREMIUM PASS"
 //#define SYSLOG_TO "SET YOUR SYSLOG SERVER"
+#include "private.h"
 
 #include <math.h>
 #include <WiFi.h>
