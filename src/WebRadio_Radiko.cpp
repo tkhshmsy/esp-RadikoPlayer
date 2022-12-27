@@ -6,9 +6,6 @@
 
 #include <math.h>
 #include <WiFi.h>
-#include <SD.h>
-#include <M5UnitLCD.h>
-#include <M5UnitOLED.h>
 #include <M5Unified.h>
 #include <nvs.h>
 
@@ -426,7 +423,7 @@ void setup(void)
   auto cfg = M5.config();
 
   cfg.external_spk = true;    /// use external speaker (SPK HAT / ATOMIC SPK)
-//cfg.external_spk_detail.omit_atomic_spk = true; // exclude ATOMIC SPK
+  cfg.external_spk_detail.omit_atomic_spk = true; // exclude ATOMIC SPK
 //cfg.external_spk_detail.omit_spk_hat    = true; // exclude SPK HAT
 
   M5.begin(cfg);
@@ -465,55 +462,6 @@ void setup(void)
 #endif
 
   WiFi.begin();
-
-  /// settings
-  if (SD.begin(GPIO_NUM_4, SPI, 25000000)) {
-    /// wifi
-    auto fs = SD.open("/wifi.txt", FILE_READ);
-    if(fs) {
-      size_t sz = fs.size();
-      char buf[sz + 1];
-      fs.read((uint8_t*)buf, sz);
-      buf[sz] = 0;
-      fs.close();
-
-      int y = 0;
-      for(int x = 0; x < sz; x++) {
-        if(buf[x] == 0x0a || buf[x] == 0x0d)
-          buf[x] = 0;
-        else if (!y && x > 0 && !buf[x - 1] && buf[x])
-          y = x;
-      }
-      WiFi.begin(buf, &buf[y]);
-    }
-
-    uint32_t nvs_handle;
-    if (ESP_OK == nvs_open("WebRadio", NVS_READWRITE, &nvs_handle)) {
-      /// radiko-premium
-      fs = SD.open("/radiko.txt", FILE_READ);
-      if(fs) {
-        size_t sz = fs.size();
-        char buf[sz + 1];
-        fs.read((uint8_t*)buf, sz);
-        buf[sz] = 0;
-        fs.close();
-  
-        int y = 0;
-        for(int x = 0; x < sz; x++) {
-          if(buf[x] == 0x0a || buf[x] == 0x0d)
-            buf[x] = 0;
-          else if (!y && x > 0 && !buf[x - 1] && buf[x])
-            y = x;
-        }
-
-        nvs_set_str(nvs_handle, "radiko_user", buf);
-        nvs_set_str(nvs_handle, "radiko_pass", &buf[y]);
-      }
-      
-      nvs_close(nvs_handle);
-    }
-    SD.end();
-  }
 
   {
     uint32_t nvs_handle;
